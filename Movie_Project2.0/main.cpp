@@ -2,7 +2,7 @@
 #include <fstream>
 #include <queue>
 #include <string>
-
+#include <list>
 using namespace std;
 
 
@@ -28,7 +28,7 @@ private:
   };
   
 
-  
+  int currentSize;
   MovieNode *head; // List head pointer
 
 
@@ -36,11 +36,11 @@ public:
   MovieList();	// Constructor
   ~MovieList(); // Destructor
   void getAllMovies();
-  void getMovie(int searchId,bool rented);
+  void getMovie(int searchId );
   string getTitle(int searchId);
-  void rentVideo();
-  void returnVideo();
- 
+  void rentMovie();
+  void returnMovie();
+  void addMovie();
 
 };
 
@@ -55,7 +55,7 @@ class CustomerQueue{
 			string name;
 			string address;
 			//rentedvids must be in stack
-			string rentedVids;
+			//string rentedVids;
 			
 		};
 	  
@@ -85,7 +85,8 @@ class CustomerQueue{
 	  void pushRentStack(int id);
 	  bool isStackEmpty();
 	  void returnVid(int &num);
-
+	  void deleteVideoId(int videoId);
+	  void addVideoId(int videoId, int &found);
 };
 
 
@@ -146,6 +147,53 @@ MovieList::~MovieList(){
     }
 }
 
+void MovieList::addMovie(){
+	ifstream inFile("video.txt");
+	string line;
+	getline (inFile, line);
+	currentSize = stoi(line);
+	currentSize++;
+	
+	string title,genre,prod,filePath;
+	int numCopies;
+
+	cout <<"Video ID: " << currentSize << endl;
+	cout <<"Title: " ;
+	cin >> title;
+	cout <<"Genre: " ;
+	cin >> genre;
+	cout <<"Production: ";
+	cin >> prod;
+	cout <<"Number of Copies: " ;
+	cin >> numCopies;
+	cout <<"Filepath/Image: " ;
+	cin >> filePath;
+	
+	MovieNode *newNode, *nodePtr;
+	
+	newNode = new MovieNode;
+	
+	newNode->id = currentSize;
+    newNode->name = title;
+    newNode->genre = genre;
+    newNode->production = prod;
+    newNode->numCopies = numCopies;
+    newNode->filePath = filePath;
+    newNode->next = NULL;
+
+    if(!head){
+      head = newNode;
+    } else{
+      nodePtr = head;
+      while (nodePtr->next)
+      	nodePtr = nodePtr->next; 
+      // Insert newNode as the last node
+      nodePtr->next = newNode;	
+    }  
+	
+}
+
+
 
 void MovieList::getAllMovies(){
   system("clear");
@@ -156,18 +204,18 @@ void MovieList::getAllMovies(){
 		nodePtr = head;
     cout << "The Movies: \n";
 		while (nodePtr){
-			cout << endl <<"ID: " << nodePtr->id << endl;
-      cout <<"TITLE: " << nodePtr->name << endl;
-      cout <<"GENRE: " <<  nodePtr->genre << endl;
-      cout <<"PRODUCTION: " <<  nodePtr->production << endl;
-      cout <<"NUMBER OF COPIES: " <<  nodePtr->numCopies << endl;
-      cout <<"FILEPATH/IMAGE: " <<  nodePtr->filePath << endl << endl;
-	    nodePtr = nodePtr->next;
+			cout << endl <<"Video ID: " << nodePtr->id << endl;
+			cout <<"Title: " << nodePtr->name << endl;
+			cout <<"Genre: " <<  nodePtr->genre << endl;
+			cout <<"Production: " <<  nodePtr->production << endl;
+			cout <<"Number of Copies: " <<  nodePtr->numCopies << endl;
+			cout <<"Filepath/Image: " <<  nodePtr->filePath << endl << endl;
+	  		nodePtr = nodePtr->next;
 		}	
 	}
 }
 
-void MovieList::getMovie(int searchId,bool rented){
+void MovieList::getMovie(int searchId ){
   MovieNode *nodePtr;
   if (head==NULL) 
     cout << "The List is empty!" << endl;
@@ -178,13 +226,16 @@ void MovieList::getMovie(int searchId,bool rented){
       if(nodePtr->id == searchId){
         cout << "Movie Title: " << nodePtr->name << endl;
         cout << "Number of Copies: " << nodePtr->numCopies << endl;
-        // if it is rented
-        if(rented){
-          nodePtr->numCopies--;
-        }
+        break;
       } 
       nodePtr = nodePtr->next;
+ 
     }
+   if (!nodePtr) {
+	cout << "MOVIE NOT FOUND!" << endl;
+	}
+
+	
   }
 }
 string MovieList::getTitle(int searchId){
@@ -208,59 +259,87 @@ return "TITLE NOT FOUND";
 }
 
 // renting a video process
-void MovieList::rentVideo(){
+void MovieList::rentMovie(){
   CustomerQueue customerQ;
   int customerId;
   int vidId;
 
-  //asking for customer id
-  cout << "Customer ID: ";
-  cin >> customerId;
-  customerQ.getCustomer(customerId);
-
-  // asking for inputs
-  cout << "\nVideos to rent ..\n\n";
-  cout << "Video ID: ";
-  cin >> vidId;
-  // to output the movie
+	//asking for customer id
+	cout << "Customer ID: ";
+	cin >> customerId;
+	customerQ.getCustomer(customerId);
+	
+	// asking for inputs
+	cout << "\nVideos to rent ..\n\n";
+	cout << "Video ID: ";
+	cin >> vidId;
   
-  getMovie(vidId,true);
+	MovieNode *nodePtr;
+
+	// update the movie linked list
+	if (head==NULL) 
+		cout << "The List is empty!" << endl;
+	else {
+		nodePtr = head;
+		while (nodePtr){
+		  if(nodePtr->id == vidId){
+		  	if(nodePtr->numCopies > 0){
+		    	int foundCatcher = 0;
+		    	customerQ.addVideoId(vidId,foundCatcher);
+		    	if(foundCatcher != 1){
+		    		nodePtr->numCopies--;
+				}
+			}
+		  } 
+		  nodePtr = nodePtr->next;
+		}
+
+	}
+	getMovie(vidId);
+
+
 
 }
 
 
 // renting a video process
-void MovieList::returnVideo(){
-	MovieNode *nodePtr, *previousNode;
+void MovieList::returnMovie(){
+	
+	MovieNode *nodePtr;
+	CustomerQueue customerQ;
+	int customerId;
+	
+	//asking for customer id
+	cout << "Customer ID: ";
+	cin >> customerId;
+	customerQ.getCustomer(customerId);
 	int vidId;
 	cout << "Video ID: ";
 	cin >> vidId;
-	// Determine if the first node is the one.
-	if (head->id == vidId){
-		nodePtr = head->next;
-		delete head;
-		head = nodePtr;
-		cout << "Video ID: " << vidId <<  " is now returned"<< endl;
-		getAllMovies();
-	}else{
-		// Initialize nodePtr to head of list
-		nodePtr = head;
-		previousNode = NULL;
-		// Skip all nodes whose value member is
-		// not equal to num.
-		while (nodePtr != NULL && nodePtr->id != vidId){
-			previousNode = nodePtr;
-			nodePtr = nodePtr->next;
-		}
-		// Link the previous node to the node after
-		// nodePtr, then delete nodePtr.
-		if (nodePtr !=NULL){
-			previousNode->next = nodePtr->next;
-			delete nodePtr;
-			cout << "Video ID: " << vidId << " is now returned"<< endl;
-		}
-	}
+    if (head==NULL) 
+    	cout << "The List is empty!" << endl;
+  else {
+    nodePtr = head;
+    while (nodePtr){
+      // to output the requested movie
+      if(nodePtr->id == vidId){
+      
+      		customerQ.deleteVideoId(vidId);
+			nodePtr->numCopies++;
+     		cout << "The Video ID " << vidId << " is now returned"<< endl;
+		
+
+
+      } 
+      nodePtr = nodePtr->next;
+    }
+  }
 }
+
+
+
+
+
 
 
 // ---------------------------------
@@ -268,6 +347,131 @@ void MovieList::returnVideo(){
 // ---------------------------------
 CustomerQueue::CustomerQueue(){
   readCustomerFile();
+}
+
+//delete the video ID from customer_rent.txt
+void CustomerQueue::deleteVideoId(int videoId){
+	list<int> myList;
+    list<int>::iterator iter;
+
+	ifstream inFile("customer_rent.txt");
+	ofstream outFile("customer_rentTemp.txt", std::ios_base::app);
+	
+	string line;
+	string vidInString;
+	while(!inFile.eof()){
+		getline (inFile, line);
+		
+		// To check if end of line
+		// so that we don't have
+		// extra 1 line on txt
+		if(inFile.eof()){
+			outFile << line;
+		} else {
+			outFile << line << endl;
+		}
+		
+		if(line == to_string(curUser.id)){
+			getline (inFile, line);
+			for(int i = 0;i < line.length();i++){
+			
+				if(line[i] != ','){
+					
+					vidInString += line[i];
+		
+				} else {
+					// ALL THE CONTENTS OF MOVIE IDs 
+					// THAT's WRITTEN IN THE TXT FILE
+					// WILL BE PUSHED
+					
+					if(stoi(vidInString) != videoId){
+						myList.push_back(stoi(vidInString));
+			    	}
+					vidInString = "";                    
+				}
+				
+	     	}
+	     	// the content of the list will
+	     	// be output to the file
+	     	for (iter = myList.begin(); iter != myList.end(); iter++)
+				outFile << *iter << ",";
+			outFile << endl;	
+  		}
+	}
+	inFile.close();
+	outFile.close();
+	
+	remove( "customer_rent.txt" );
+	char oldname[] ="customer_rentTemp.txt";
+	char newname[] ="customer_rent.txt";
+	rename( oldname , newname );
+
+}
+
+// Add video to the customer on customer_rent.txt
+void CustomerQueue::addVideoId(int videoId, int &found){
+	list<int> myList;
+    list<int>::iterator iter;
+	ifstream inFile("customer_rent.txt");
+	ofstream outFile("customer_rentTemp.txt");
+	
+	string line;
+	string vidInString;
+	while(!inFile.eof()){
+		getline (inFile, line);
+		
+		// To check if end of line
+		// so that we don't have
+		// extra 1 line on txt
+		if(inFile.eof()){
+			outFile << line;
+		} else {
+			outFile << line << endl;
+		}
+		if(line == to_string(curUser.id)){
+			getline (inFile, line);
+	
+			for(int i = 0;i < line.length();i++){
+				if(line[i] != ','){
+					vidInString += line[i];
+				} else {
+					// ALL THE CONTENTS OF MOVIE IDs 
+					// THAT's WRITTEN IN THE TXT FILE
+					// WILL BE PUSHED
+					
+					if(stoi(vidInString) == videoId){
+						found = 1;
+						cout << "You already rented: " << videoId << endl;
+			     		inFile.close();
+						outFile.close();
+			     		remove( "customer_rentTemp.txt" );
+			     		return;
+			    	} else {
+			    		myList.push_back(stoi(vidInString));
+					}
+					vidInString = "";                    
+				}
+				
+	     	}
+			myList.push_back(videoId);
+
+	     	// the content of the list will
+	     	// be output to the file
+	     	for (iter = myList.begin(); iter != myList.end(); iter++)
+				outFile << *iter << ",";
+			outFile << endl;	
+
+  		}
+
+	}
+	inFile.close();
+	outFile.close();
+
+	remove( "customer_rent.txt" );
+	char oldname[] ="customer_rentTemp.txt";
+	char newname[] ="customer_rent.txt";
+	rename( oldname , newname );
+
 }
 
 
@@ -285,8 +489,8 @@ string line;
     newCustomer.name = line;
     getline (inFile, line);
     newCustomer.address = line;
-    getline (inFile, line);
-    newCustomer.rentedVids = line;
+    //getline (inFile, line);
+    //newCustomer.rentedVids = line;
 
     q.push(newCustomer);
   }
@@ -374,9 +578,6 @@ void CustomerQueue::listAllVidRented(){
 // CUSTOMER RENT FUNCTIONS
 
 
-
-
-
 void CustomerQueue::pushRentStack(int id){
 	rentStack *newNode;
 	// Allocate a new node & store Num
@@ -424,9 +625,14 @@ int main(){
   MovieList movie;
   CustomerQueue q;
   //movie.getAllMovies();
-  //movie.returnVideo();
-  q.listAllVidRented();
-
+  //movie.returnMovie();
+  //q.listAllVidRented();
+  //movie.getMovie(14);
+ // movie.returnMovie();
+  //movie.getMovie(14);
+  //movie.rentMovie();
+	movie.addMovie();
+	movie.getAllMovies();
 }
 
 
