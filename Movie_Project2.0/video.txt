@@ -1,37 +1,151 @@
-6
+25
 id_1
-Avengers : Endgame
-Action
-Marvel
-10
-./filepath
+Ma
+Horror
+Blumhouse Productions
+49
+images/ma.jpg
 id_2
-X-MEN - Days of future Past
-Action
-Marvel
-122
-./filepatsda/sds
+Nobody Sleeps in the Woods Tonight
+Horror
+Akson Studio
+50
+images/NobodySleepsintheWoodsTonight.jpg
 id_3
-Captain Marvel
-Action
-Marvel
-122
-./filepatsda/sds
+Kadaver
+Horror
+SF Studios
+50
+images/Kadaver.jpg
+id_4
+The Brigde Curse
+Horror
+Pegasus Entertainment
+50
+images/TheBridgeCurse.jpg
+id_5
+Metamorphosis
+Horror
+Attractive Features Ltd
+50
+images/Metamorphosis.jpg
+id_6
+Emma
+Romance
+Blueprint Pictures
+50
+images/Emma.jpg
+id_7
+Hello World
+Romance
+Graphinica
+50
+images/HelloWorld.jpg
+id_8
+A Whisker Away
+Romance
+Toho Animation
+50
+images/AwhiskerAway.jpg
+id_9
+Your Lie in April (Live Action)
+Romance
+Toho Co., Ltd.
+50
+images/YourLieinApril(LiveAction).jpg
+id_10
+On Your Wedding Day
+Romance
+Filmmaker R&K
+50
+images/OnYourWeddingDay.jpg
+id_11
+Space Sweepers
+Sci-Fi
+Dexter Studios
+50
+images/Space.jpg
+id_12
+Underwater
+Sci-Fi
+TSG Entertainment
+50
+images/Underwater.jpg
+id_13
+Mortal Engines
+Sci-Fi
+Universal Pictures
+50
+images/MortalEngines.jpg
 id_14
-Captain Marvel
+Geostorm
+Sci-Fi
+Warner Bros. Pictures
+50
+images/Geostorm.jpg
+id_15
+Annihilation
+Sci-Fi
+DNA Films
+50
+images/Annihilation.jpg
+id_16
+Extraction
 Action
-Marvel
-122
-./filepatsda/sds
-id_999
-Captain Marvel
+Thematic Entertainment
+50
+images/Extraction.jpg
+id_17
+The Old Guard
 Action
-Marvel
-122
-./filepatsda/sds
-id_2424
-Captain Marvel
+Skydance Media
+50
+images/TheOldGuard.jpg
+id_18
+Close
 Action
-Marvel
-122
-./filepatsda/sds
+Piccadilly Pictures
+50
+images/Close.jpg
+id_19
+Blood Shot
+Action
+Columbia Pictures
+50
+images/Bloodshot.jpg
+id_20
+Inferno
+Action
+Columbia Pictures
+50
+images/Inferno.jpg
+id_21
+The Witches
+Comedy
+Warner Bros. Pictures
+50
+images/Witches.jpg
+id_22
+Good Boys
+Comedy
+Point Grey Pictures
+50
+images/GoodBoys.jpg
+id_23
+Tag
+Comedy
+Broken Road Productions
+50
+images/Tag.jpg
+id_24
+Hot Pursuit
+Comedy
+Pacific Standard
+50
+images/HotPursuit.jpg
+id_25
+The Hustle
+Comedy
+Pin High Productions
+51
+images/TheHustle.jpg
