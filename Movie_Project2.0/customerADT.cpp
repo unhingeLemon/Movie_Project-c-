@@ -97,6 +97,8 @@ void CustomerQueue::addNewCustomer() {
 	char newname2[] = "customer.txt";
 	rename(oldname2, newname2);
 
+	readCustomerFile();
+
 }
 
 

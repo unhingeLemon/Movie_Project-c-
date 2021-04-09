@@ -89,16 +89,7 @@ MovieList::~MovieList() {
 // Add movie to the linked list of movies
 void MovieList::addMovie() {
 
-	// string line;
-  // cout << currentSize;
-	// if(currentSize){
-  //   currentSize++;
-  // } else {
-  //   	getline (inFile, line);
-  //     currentSize = stoi(line);
-  //     currentSize++;
-  // }
-  // cout << currentSize;
+
 	string title, genre, prod, filePath;
 	int numCopies;
 
